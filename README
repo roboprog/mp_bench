@@ -1,0 +1,20 @@
+Welcome to mp_bench
+
+This package attempts to benchmark several language implementations
+in a multiprocessor / multi CPU environment,
+and in particular using threading and fork.
+Fork doesn't work well under Windows (depite POSIX layer),
+so I've not put any effort there.
+
+This benchmark focus on churning strings around,
+*not* on numberic operations or other low level bit twiddling.
+
+License
+-------
+This software is released under the LGPL (lesser general public license)
+(http://www.gnu.org/licenses/lgpl.txt)
+
+
+
+- Rob Anderson ("roboprog")
+

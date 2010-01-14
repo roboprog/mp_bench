@@ -1,0 +1,5 @@
+# files in "mp_bench" project to be ignored
+#
+*.class
+*.cbin
+*~

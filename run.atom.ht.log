@@ -1,0 +1,434 @@
+C compile...
+Java compile...
+
+
+Linux charon 2.6.24-26-generic #1 SMP Tue Dec 1 18:37:31 UTC 2009 i686 GNU/Linux
+processor	: 0
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 28
+model name	: Intel(R) Atom(TM) CPU N270   @ 1.60GHz
+stepping	: 2
+cpu MHz		: 1600.000
+cache size	: 512 KB
+physical id	: 0
+siblings	: 2
+core id		: 0
+cpu cores	: 1
+fdiv_bug	: no
+hlt_bug		: no
+f00f_bug	: no
+coma_bug	: no
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 10
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe constant_tsc arch_perfmon pebs bts pni monitor ds_cpl est tm2 ssse3 xtpr lahf_lm
+bogomips	: 3192.29
+clflush size	: 64
+
+processor	: 1
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 28
+model name	: Intel(R) Atom(TM) CPU N270   @ 1.60GHz
+stepping	: 2
+cpu MHz		: 1600.000
+cache size	: 512 KB
+physical id	: 0
+siblings	: 2
+core id		: 0
+cpu cores	: 1
+fdiv_bug	: no
+hlt_bug		: no
+f00f_bug	: no
+coma_bug	: no
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 10
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe constant_tsc arch_perfmon pebs bts pni monitor ds_cpl est tm2 ssse3 xtpr lahf_lm
+bogomips	: 3191.99
+clflush size	: 64
+
+             total       used       free     shared    buffers     cached
+Mem:       1023500     786120     237380          0      45368     434928
+-/+ buffers/cache:     305824     717676
+Swap:      2851496         16    2851480
+
+
+
+
+Now trying ./thd_frk.cbin implementation:
+gcc (GCC) 4.2.4 (Ubuntu 4.2.4-1ubuntu4)
+Copyright (C) 2007 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+
+	Now trying S method
+		1 iterations:
+			0:00.00elapsed 0%CPU
+			0:00.00elapsed 400%CPU
+			0:00.00elapsed 200%CPU
+			0:00.00elapsed 400%CPU
+			0:00.00elapsed 200%CPU
+		5001 iterations:
+			0:00.20elapsed 100%CPU
+			0:00.18elapsed 100%CPU
+			0:00.18elapsed 100%CPU
+			0:00.18elapsed 100%CPU
+			0:00.18elapsed 101%CPU
+		10001 iterations:
+			0:00.34elapsed 100%CPU
+			0:00.34elapsed 101%CPU
+			0:00.34elapsed 100%CPU
+			0:00.34elapsed 100%CPU
+			0:00.34elapsed 100%CPU
+		20001 iterations:
+			0:00.67elapsed 100%CPU
+			0:00.67elapsed 99%CPU
+			0:00.67elapsed 100%CPU
+			0:00.67elapsed 100%CPU
+			0:00.67elapsed 100%CPU
+
+	Now trying F method
+		1 iterations:
+			0:00.00elapsed 100%CPU
+			0:00.00elapsed 0%CPU
+			0:00.00elapsed 0%CPU
+			0:00.00elapsed 133%CPU
+			0:00.00elapsed 0%CPU
+		5001 iterations:
+			0:04.87elapsed 70%CPU
+			0:04.92elapsed 70%CPU
+			0:04.92elapsed 71%CPU
+			0:05.02elapsed 75%CPU
+			0:04.94elapsed 73%CPU
+		10001 iterations:
+			0:09.96elapsed 73%CPU
+			0:09.96elapsed 71%CPU
+			0:09.97elapsed 73%CPU
+			0:10.03elapsed 74%CPU
+			0:09.84elapsed 70%CPU
+		20001 iterations:
+			0:20.08elapsed 70%CPU
+			0:19.92elapsed 70%CPU
+			0:19.99elapsed 69%CPU
+			0:20.05elapsed 70%CPU
+			0:19.96elapsed 69%CPU
+
+
+Now trying ./thd_frk.pl implementation:
+
+This is perl, v5.8.8 built for i486-linux-gnu-thread-multi
+
+Copyright 1987-2006, Larry Wall
+
+Perl may be copied only under the terms of either the Artistic License or the
+GNU General Public License, which may be found in the Perl 5 source kit.
+
+Complete documentation for Perl, including FAQ lists, should be found on
+this system using "man perl" or "perldoc perl".  If you have access to the
+Internet, point your browser at http://www.perl.org/, the Perl Home Page.
+
+
+	Now trying S method
+		1 iterations:
+			0:00.09elapsed 101%CPU
+			0:00.04elapsed 95%CPU
+			0:00.05elapsed 96%CPU
+			0:00.05elapsed 105%CPU
+			0:00.05elapsed 100%CPU
+		5001 iterations:
+			0:00.20elapsed 97%CPU
+			0:00.19elapsed 98%CPU
+			0:00.19elapsed 100%CPU
+			0:00.19elapsed 101%CPU
+			0:00.19elapsed 100%CPU
+		10001 iterations:
+			0:00.32elapsed 100%CPU
+			0:00.32elapsed 100%CPU
+			0:00.32elapsed 99%CPU
+			0:00.32elapsed 100%CPU
+			0:00.32elapsed 100%CPU
+		20001 iterations:
+			0:00.58elapsed 99%CPU
+			0:00.58elapsed 99%CPU
+			0:00.58elapsed 100%CPU
+			0:00.58elapsed 100%CPU
+			0:00.58elapsed 100%CPU
+
+	Now trying F method
+		1 iterations:
+			0:00.06elapsed 85%CPU
+			0:00.06elapsed 85%CPU
+			0:00.06elapsed 85%CPU
+			0:00.05elapsed 98%CPU
+			0:00.06elapsed 78%CPU
+		5001 iterations:
+			0:22.84elapsed 0%CPU
+			0:22.69elapsed 0%CPU
+			0:22.62elapsed 0%CPU
+			0:22.74elapsed 0%CPU
+			0:22.79elapsed 0%CPU
+		10001 iterations:
+			0:36.45elapsed 0%CPU
+			0:36.28elapsed 0%CPU
+			0:36.52elapsed 0%CPU
+			0:36.43elapsed 0%CPU
+			0:36.53elapsed 0%CPU
+		20001 iterations:
+			0:36.42elapsed 0%CPU
+			0:36.44elapsed 0%CPU
+			0:36.33elapsed 0%CPU
+			0:36.44elapsed 0%CPU
+			0:36.24elapsed 0%CPU
+
+	Now trying T method
+		1 iterations:
+			0:00.10elapsed 71%CPU
+			0:00.12elapsed 49%CPU
+			0:00.10elapsed 58%CPU
+			0:00.05elapsed 98%CPU
+			0:00.08elapsed 69%CPU
+		5001 iterations:
+			0:29.32elapsed 100%CPU
+			0:28.88elapsed 100%CPU
+			0:28.72elapsed 100%CPU
+			0:28.93elapsed 100%CPU
+			0:29.10elapsed 100%CPU
+		10001 iterations:
+			0:57.88elapsed 100%CPU
+			0:58.10elapsed 100%CPU
+			0:58.51elapsed 100%CPU
+			0:57.52elapsed 100%CPU
+			0:48.84elapsed 100%CPU
+		20001 iterations:
+			1:55.90elapsed 100%CPU
+			1:56.82elapsed 100%CPU
+			1:56.02elapsed 100%CPU
+			1:56.07elapsed 100%CPU
+			1:56.79elapsed 100%CPU
+
+
+Now trying ./thd_frk.py implementation:
+Python 2.5.2
+
+	Now trying S method
+		1 iterations:
+			0:00.04elapsed 106%CPU
+			0:00.04elapsed 97%CPU
+			0:00.04elapsed 97%CPU
+			0:00.04elapsed 102%CPU
+			0:00.04elapsed 106%CPU
+		5001 iterations:
+			0:00.43elapsed 100%CPU
+			0:00.39elapsed 100%CPU
+			0:00.39elapsed 99%CPU
+			0:00.39elapsed 99%CPU
+			0:00.39elapsed 100%CPU
+		10001 iterations:
+			0:00.74elapsed 100%CPU
+			0:00.73elapsed 100%CPU
+			0:00.73elapsed 99%CPU
+			0:00.73elapsed 100%CPU
+			0:00.73elapsed 99%CPU
+		20001 iterations:
+			0:01.45elapsed 99%CPU
+			0:01.42elapsed 100%CPU
+			0:01.41elapsed 100%CPU
+			0:01.41elapsed 100%CPU
+			0:01.40elapsed 99%CPU
+
+	Now trying F method
+		1 iterations:
+			0:00.05elapsed 87%CPU
+			0:00.05elapsed 72%CPU
+			0:00.05elapsed 85%CPU
+			0:00.05elapsed 90%CPU
+			0:00.05elapsed 77%CPU
+		5001 iterations:
+			0:26.35elapsed 5%CPU
+			0:26.56elapsed 4%CPU
+			0:26.60elapsed 4%CPU
+			0:26.28elapsed 5%CPU
+			0:26.84elapsed 4%CPU
+		10001 iterations:
+			0:52.44elapsed 5%CPU
+			0:53.30elapsed 4%CPU
+			0:52.92elapsed 5%CPU
+			0:52.79elapsed 4%CPU
+			0:52.68elapsed 5%CPU
+		20001 iterations:
+			1:44.85elapsed 5%CPU
+			1:46.05elapsed 4%CPU
+			1:45.24elapsed 5%CPU
+			1:46.19elapsed 4%CPU
+			1:46.60elapsed 4%CPU
+
+	Now trying T method
+		1 iterations:
+			0:00.04elapsed 97%CPU
+			0:00.04elapsed 104%CPU
+			0:00.04elapsed 90%CPU
+			0:00.04elapsed 100%CPU
+			0:00.04elapsed 95%CPU
+		5001 iterations:
+			0:03.41elapsed 115%CPU
+			0:03.34elapsed 117%CPU
+			0:02.78elapsed 113%CPU
+			0:03.97elapsed 113%CPU
+			0:04.16elapsed 114%CPU
+		10001 iterations:
+			0:07.27elapsed 116%CPU
+			0:06.66elapsed 114%CPU
+			0:08.32elapsed 112%CPU
+			0:07.80elapsed 115%CPU
+			0:08.33elapsed 112%CPU
+		20001 iterations:
+			0:16.69elapsed 115%CPU
+			0:15.47elapsed 115%CPU
+			0:16.24elapsed 116%CPU
+			0:17.09elapsed 113%CPU
+			0:16.47elapsed 115%CPU
+
+
+Now trying ./thd_frk.rb implementation:
+ruby 1.8.6 (2007-09-24 patchlevel 111) [i486-linux]
+
+	Now trying S method
+		1 iterations:
+			0:00.04elapsed 85%CPU
+			0:00.02elapsed 103%CPU
+			0:00.01elapsed 105%CPU
+			0:00.01elapsed 111%CPU
+			0:00.01elapsed 106%CPU
+		5001 iterations:
+			0:00.43elapsed 99%CPU
+			0:00.42elapsed 99%CPU
+			0:00.42elapsed 100%CPU
+			0:00.42elapsed 99%CPU
+			0:00.42elapsed 100%CPU
+		10001 iterations:
+			0:00.82elapsed 100%CPU
+			0:00.82elapsed 100%CPU
+			0:00.82elapsed 99%CPU
+			0:00.82elapsed 100%CPU
+			0:00.82elapsed 100%CPU
+		20001 iterations:
+			0:01.60elapsed 100%CPU
+			0:01.60elapsed 100%CPU
+			0:01.60elapsed 100%CPU
+			0:01.61elapsed 100%CPU
+			0:01.61elapsed 100%CPU
+
+	Now trying F method
+		1 iterations:
+			0:00.01elapsed 94%CPU
+			0:00.01elapsed 111%CPU
+			0:00.01elapsed 94%CPU
+			0:00.01elapsed 94%CPU
+			0:00.01elapsed 123%CPU
+		5001 iterations:
+			0:11.44elapsed 1%CPU
+			0:11.08elapsed 7%CPU
+			0:11.55elapsed 7%CPU
+			0:11.79elapsed 4%CPU
+			0:11.72elapsed 2%CPU
+		10001 iterations:
+			0:23.38elapsed 8%CPU
+			0:23.54elapsed 4%CPU
+			0:23.37elapsed 4%CPU
+			0:23.46elapsed 9%CPU
+			0:23.49elapsed 9%CPU
+		20001 iterations:
+			0:47.09elapsed 2%CPU
+			0:47.09elapsed 0%CPU
+			0:46.78elapsed 9%CPU
+			0:46.90elapsed 6%CPU
+			0:47.05elapsed 7%CPU
+
+	Now trying T method
+		1 iterations:
+			0:00.03elapsed 100%CPU
+			0:00.04elapsed 81%CPU
+			0:00.02elapsed 100%CPU
+			0:00.02elapsed 100%CPU
+			0:00.01elapsed 111%CPU
+		5001 iterations:
+			0:01.19elapsed 101%CPU
+			0:01.12elapsed 100%CPU
+			0:01.11elapsed 99%CPU
+			0:01.19elapsed 100%CPU
+			0:01.16elapsed 99%CPU
+		10001 iterations:
+			0:02.39elapsed 100%CPU
+			0:02.39elapsed 100%CPU
+			0:02.45elapsed 100%CPU
+			0:02.45elapsed 100%CPU
+			0:02.34elapsed 100%CPU
+		20001 iterations:
+			0:05.68elapsed 100%CPU
+			0:05.28elapsed 100%CPU
+			0:05.74elapsed 100%CPU
+			0:06.00elapsed 100%CPU
+			0:05.51elapsed 100%CPU
+
+
+Now trying /usr/local/java/bin/java ThdFrk implementation:
+java version "1.6.0_13"
+Java(TM) SE Runtime Environment (build 1.6.0_13-b03)
+Java HotSpot(TM) Client VM (build 11.3-b02, mixed mode, sharing)
+
+	Now trying S method
+		1 iterations:
+			0:00.19elapsed 94%CPU
+			0:00.17elapsed 111%CPU
+			0:00.15elapsed 116%CPU
+			0:00.19elapsed 94%CPU
+			0:00.20elapsed 96%CPU
+		5001 iterations:
+			0:00.66elapsed 118%CPU
+			0:00.81elapsed 106%CPU
+			0:00.72elapsed 117%CPU
+			0:00.65elapsed 118%CPU
+			0:00.65elapsed 118%CPU
+		10001 iterations:
+			0:01.04elapsed 108%CPU
+			0:01.05elapsed 109%CPU
+			0:01.10elapsed 107%CPU
+			0:01.00elapsed 110%CPU
+			0:01.04elapsed 113%CPU
+		20001 iterations:
+			0:01.84elapsed 110%CPU
+			0:01.79elapsed 104%CPU
+			0:01.82elapsed 108%CPU
+			0:01.79elapsed 109%CPU
+			0:01.76elapsed 108%CPU
+
+	Now trying T method
+		1 iterations:
+			0:00.19elapsed 89%CPU
+			0:00.19elapsed 97%CPU
+			0:00.23elapsed 95%CPU
+			0:00.22elapsed 94%CPU
+			0:00.23elapsed 95%CPU
+		5001 iterations:
+			0:00.80elapsed 114%CPU
+			0:00.80elapsed 118%CPU
+			0:00.89elapsed 116%CPU
+			0:00.79elapsed 115%CPU
+			0:00.81elapsed 115%CPU
+		10001 iterations:
+			0:01.25elapsed 112%CPU
+			0:01.24elapsed 111%CPU
+			0:01.34elapsed 110%CPU
+			0:01.30elapsed 105%CPU
+			0:01.36elapsed 115%CPU
+		20001 iterations:
+			0:02.14elapsed 103%CPU
+			0:02.20elapsed 104%CPU
+			0:02.22elapsed 105%CPU
+			0:02.16elapsed 106%CPU
+			0:02.15elapsed 108%CPU
