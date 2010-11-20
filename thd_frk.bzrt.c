@@ -104,31 +104,15 @@ void                service_fork()
 	is_err = setjmp( catcher);
 	if ( ! is_err)
 		{
-		heap = bza_cons_stack_rt( &catcher, 2048, 1);
-		}  // try?
-	else
-		{
-		die( "failed stack/heap creation");
-		}  // heap/stack creation failed?
+		heap = bza_cons_stack_rt( &catcher, 3072, 1);
 
-	is_err = setjmp( catcher);
-	if ( ! is_err)
-		{
 		// call non-reentrant routine on global var - safe w/out threading!
 		secs = time( NULL);
 		local_process_var = bzb_from_asciiz( &catcher, &heap,
 				ctime( &secs) );
 
 		pg = gen_pg_template( &catcher, &heap);
-		}  // try?
-	else
-		{
-		die( "failed text data creation");
-		}  // text creation failed?
 
-	is_err = setjmp( catcher);
-	if ( ! is_err)
-		{
 		// cat into buf, one I/O call
 
 		srcs[ 0 ] = local_process_var;
@@ -142,21 +126,12 @@ void                service_fork()
 
 		// don't bother to dereference buffers here,
 		//  as we are just about to toss the containing heap
-		}  // try?
-	else
-		{
-		die( "failed to access text data");
-		}  // text access failed?
-
-	is_err = setjmp( catcher);
-	if ( ! is_err)
-		{
 		bza_dest_stack( NULL, &heap);
 		}  // try?
 	else
 		{
-		die( "failed stack/heap destruction");
-		}  // heap/stack destruction failed?
+		die( "service_fork() failed");
+		}  // catch?
 
     }
 
