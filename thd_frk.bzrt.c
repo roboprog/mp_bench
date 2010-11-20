@@ -74,7 +74,6 @@ size_t				gen_pg_template
 	size_t			text;
     int             pass;
 	size_t			prev;
-	size_t			srcs[ 3 ];
 
     // quick & dirty transliteration of string logic:
 
@@ -83,10 +82,7 @@ size_t				gen_pg_template
 
         {
         prev = text;
-		srcs[ 0 ] = prev;
-		srcs[ 1 ] = prev;
-		srcs[ 2 ] = 0;
-		text = bzb_concat( catcher, heap, srcs);
+		text = bzb_concat_to( catcher, heap, text, text);
 		bzb_deref( catcher, *heap, prev);
         }  // cat some crud up to thrash on cache
 
@@ -108,7 +104,7 @@ void                service_fork()
 	is_err = setjmp( catcher);
 	if ( ! is_err)
 		{
-		heap = bza_cons_stack( &catcher);
+		heap = bza_cons_stack_rt( &catcher, 2048, 1);
 		}  // try?
 	else
 		{
