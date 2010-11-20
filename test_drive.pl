@@ -37,6 +37,11 @@ use strict;
 #  (S = sequential, F = fork, T = thread)
 my %IMPLS =
 	(
+	'./thd_frk.bzrt.cbin' =>
+		[
+		'gcc --version',
+		[ 'S', 'F' ]
+		],
 	'./thd_frk.cbin' =>
 		[
 		'gcc --version',
@@ -110,8 +115,11 @@ sub	main
 sub	build
 	{
 
-	print "C compile...\n";
+	print "C compile(s)...\n";
 	# use max optomization, for all the good it does:
+	system( 'gcc -O3 thd_frk.bzrt.c ' .
+			'buzzard-0.1/libbzrt.a ' .
+			'-o thd_frk.bzrt.cbin');
 	system( 'gcc -O3 thd_frk.c -o thd_frk.cbin');
 
 	print "Java compile...\n";
