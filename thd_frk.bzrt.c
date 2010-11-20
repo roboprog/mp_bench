@@ -64,39 +64,30 @@ void                reaper
     }
 
 /* pretend to do something that would generate some CPU work */
-// TODO: fix memory leak (or not, since exit() will just toss it out)
 static
-const char *        gen_pg_template()
+size_t				gen_pg_template
+	(
+	jmp_buf *		catcher,
+	t_stack * *		heap
+	)
     {
-    char *          text;
+	size_t			text;
     int             pass;
-    char *          prev;
-    int             ln;
+	size_t			prev;
+	size_t			srcs[ 3 ];
 
     // quick & dirty transliteration of string logic:
-    //  (ignoring length counter vs terminating sentinel performance differences)
 
-    text = strdup( "<blah/>");
-    if ( text == NULL)
-        {
-        die( "failed memory allocation");
-        }  // allocation failed?
-
+    text = bzb_from_asciiz( catcher, heap, "<blah/>");
     for ( pass = 0; pass < 6; pass++)
 
         {
         prev = text;
-        ln = strlen( prev);
-        text = malloc( ( ln * 2) + 1);
-        if ( text == NULL)
-            {
-            die( "failed memory allocation");
-            }  // allocation failed?
-
-        memcpy( text, prev, ln);
-        memcpy( text + ln, prev, ln);
-        text[ ln * 2 ] = '\0';
-        free( prev);
+		srcs[ 0 ] = prev;
+		srcs[ 1 ] = prev;
+		srcs[ 2 ] = 0;
+		text = bzb_concat( catcher, heap, srcs);
+		bzb_deref( catcher, *heap, prev);
         }  // cat some crud up to thrash on cache
 
     return text;
@@ -113,12 +104,7 @@ void                service_fork()
 	size_t			pg;
 	size_t			srcs[ 4 ];
 	size_t			buf;
-    int             tm_ln;
-    int             pg_ln;
-    char *          buf_off;
 
-    // call non-reentrant routine on global var - safe w/out threading!
-    secs = time( NULL);
 	is_err = setjmp( catcher);
 	if ( ! is_err)
 		{
@@ -132,10 +118,12 @@ void                service_fork()
 	is_err = setjmp( catcher);
 	if ( ! is_err)
 		{
+		// call non-reentrant routine on global var - safe w/out threading!
+		secs = time( NULL);
 		local_process_var = bzb_from_asciiz( &catcher, &heap,
 				ctime( &secs) );
-		pg = bzb_from_asciiz( &catcher, &heap,
-				gen_pg_template() );
+
+		pg = gen_pg_template( &catcher, &heap);
 		}  // try?
 	else
 		{
