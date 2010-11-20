@@ -63,6 +63,35 @@ void                reaper
     // wait( NULL);
     }
 
+/* create starting page template buffer with some text and initiail size */
+static
+size_t				from_asciiz_with_init_size
+	(
+	jmp_buf *		catcher,
+	t_stack * *		heap,
+	const
+	char *			asciiz,
+	size_t			size
+	)
+    {
+	size_t			text;
+	size_t			init;
+    int             pass;
+	size_t			prev;
+
+    text = bzb_init_size( catcher, heap, size);
+
+    init = bzb_from_asciiz( catcher, heap, asciiz);
+
+	prev = text;
+	text = bzb_concat_to( catcher, heap, text, init);
+	bzb_deref( catcher, *heap, prev);
+
+	bzb_deref( catcher, *heap, init);
+
+    return text;
+    }
+
 /* pretend to do something that would generate some CPU work */
 static
 size_t				gen_pg_template
@@ -77,7 +106,12 @@ size_t				gen_pg_template
 
     // quick & dirty transliteration of string logic:
 
-    text = bzb_from_asciiz( catcher, heap, "<blah/>");
+    // text = bzb_from_asciiz( catcher, heap, "<blah/>");
+
+	// minor hack:  set a bit of extra initial size in buffer:
+    text = from_asciiz_with_init_size( catcher, heap, "<blah/>", 512);
+	// TODO:  add this to library
+
     for ( pass = 0; pass < 6; pass++)
 
         {
@@ -104,7 +138,7 @@ void                service_fork()
 	is_err = setjmp( catcher);
 	if ( ! is_err)
 		{
-		heap = bza_cons_stack_rt( &catcher, 3072, 1);
+		heap = bza_cons_stack_rt( &catcher, 2048, 1);
 
 		// call non-reentrant routine on global var - safe w/out threading!
 		secs = time( NULL);
