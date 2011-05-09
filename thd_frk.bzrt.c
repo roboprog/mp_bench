@@ -7,6 +7,8 @@
 #include <string.h>
 #include <time.h>
 
+#include <pthread.h>
+
 #include "buzzard-0.1/bzrt_alloc.h"
 #include "buzzard-0.1/bzrt_bytes.h"
 
@@ -169,6 +171,36 @@ void                service_fork()
 
     }
 
+/* pretend to provide a useful service for thread testing */
+static
+void *				service_thread
+	(
+	void *			param
+	)
+	{
+	puts( "TODO");
+	return NULL;
+	}
+
+/* test thread based concurrency */
+static
+void                do_threads
+    (
+    int             cnt
+    )
+    {
+	pthread_t		thread;
+
+    while ( ( cnt--) > 0)
+
+        {
+		pthread_create( &thread, NULL, &service_thread, NULL);
+		// TODO:  save thread ID
+        }  // lob off each slave to process "request"
+
+	// TODO:  join all threads started
+    }
+
 /* test fork based concurrency */
 static
 void                do_forks
@@ -195,7 +227,6 @@ void                do_forks
         }  // lob off each slave to process "request"
 
     }
-
 /* test sequential processing for timing baseline */
 static
 void                do_sequence
@@ -227,8 +258,7 @@ int                 main
     cnt = atoi( argv[ 2 ]);
     if ( mode == 'T')
         {
-        // &do_threads( $cnt);
-        die( "Sorry, threads not implemented yet");
+        do_threads( cnt);
         }  // threads?
     else if ( mode == 'F')
         {

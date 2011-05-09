@@ -40,7 +40,7 @@ my %IMPLS =
 	'./thd_frk.bzrt.cbin' =>
 		[
 		'gcc --version',
-		[ 'S', 'F' ]
+		[ 'S', 'F', 'T' ]
 		],
 	'./thd_frk.cbin' =>
 		[
@@ -117,10 +117,12 @@ sub	build
 
 	print "C compile(s)...\n";
 	# use max optomization, for all the good it does:
-	system( 'gcc -O3 thd_frk.bzrt.c ' .
+	system( 'gcc -O3 -pthread thd_frk.bzrt.c ' .
 			'buzzard-0.1/libbzrt.a ' .
 			'-o thd_frk.bzrt.cbin');
 	system( 'gcc -O3 thd_frk.c -o thd_frk.cbin');
+
+	exit 0;  # TEMP
 
 	print "Java compile...\n";
 	# "just" compile, as the JIT deals with optomization later
