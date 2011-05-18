@@ -34,6 +34,9 @@
 //    You should have received a copy of the GNU Lesser General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+// size of "heap" used by each bzrt library "task"
+#define TASK_HEAP_SIZE	2048
+
 /*
  * a non-local var, for the sake of argument
  * ("a thread would stomp it, unless you are very careful" vs
@@ -141,7 +144,7 @@ void                service_fork()
 	is_err = setjmp( catcher);
 	if ( ! is_err)
 		{
-		heap = bza_cons_stack_rt( &catcher, 2048, 1);
+		heap = bza_cons_stack_rt( &catcher, TASK_HEAP_SIZE, 1);
 
 		// call non-reentrant routine on global var - safe w/out threading!
 		secs = time( NULL);
@@ -179,8 +182,48 @@ void *				service_thread
 	void *			param
 	)
 	{
-	puts( "TODO");
-	return NULL;
+    time_t          secs;
+	jmp_buf			catcher;
+	int				is_err;
+	t_stack *		heap;
+	size_t			pg;
+	size_t			srcs[ 4 ];
+	size_t			buf;
+
+	is_err = setjmp( catcher);
+	if ( ! is_err)
+		{
+		// TODO:  critical section
+		heap = bza_cons_stack_rt( &catcher, TASK_HEAP_SIZE, 1);
+
+		// TODO:  critical section
+		secs = time( NULL);
+		local_process_var = bzb_from_asciiz( &catcher, &heap,
+				ctime( &secs) );
+
+		pg = gen_pg_template( &catcher, &heap);
+
+		// cat into buf, one I/O call
+
+		srcs[ 0 ] = local_process_var;
+		srcs[ 1 ] = pg;
+		srcs[ 2 ] = bzb_from_asciiz( &catcher, &heap, "\n");
+		srcs[ 3 ] = 0;
+		buf = bzb_concat( &catcher, &heap, srcs);
+
+		puts( bzb_to_asciiz( &catcher, heap, buf) );
+		fflush( stdout);
+
+		// TODO:  critical section
+		// don't bother to dereference buffers here,
+		//  as we are just about to toss the containing heap
+		bza_dest_stack( NULL, &heap);
+		}  // try?
+	else
+		{
+		die( "service_fork() failed");
+		}  // catch?
+
 	}
 
 /* test thread based concurrency */
