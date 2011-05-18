@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <assert.h>
 
 #include <pthread.h>
 
@@ -189,16 +190,24 @@ void                do_threads
     int             cnt
     )
     {
-	pthread_t		thread;
+	pthread_t *		threads;
+	int				idx;
 
-    while ( ( cnt--) > 0)
+	threads = malloc( cnt * sizeof( pthread_t) );
+	assert( threads != NULL);
+    for ( idx = 0; idx < cnt; idx++)
 
         {
-		pthread_create( &thread, NULL, &service_thread, NULL);
-		// TODO:  save thread ID
+		pthread_create( &( threads[ idx ]), NULL, &service_thread, NULL);
         }  // lob off each slave to process "request"
 
-	// TODO:  join all threads started
+    for ( idx = 0; idx < cnt; idx++)
+
+        {
+		pthread_join( threads[ idx ], NULL);
+        }  // wait for each slave to complete
+
+	free( threads);
     }
 
 /* test fork based concurrency */
