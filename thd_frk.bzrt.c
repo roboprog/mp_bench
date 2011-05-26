@@ -1,4 +1,5 @@
-/* Test C forking (in comparison w/ higher level languages) */
+/* Test C forking and thread, using Buzzard library
+ * (in comparison w/ higher level languages) */
 
 #include <sys/wait.h>
 #include <ctype.h>
@@ -37,10 +38,20 @@
 // size of "heap" used by each bzrt library "task"
 #define TASK_HEAP_SIZE	2048
 
+/* lock for system lib calls not verified to be safe */
+static
+pthread_mutex_t		sys_lock;
+
+/*
+ * a SHARED var
+ * ("a thread would stomp it, unless you are very careful")
+ */
+static
+size_t				thread_dangerous_var;
+
 /*
  * a non-local var, for the sake of argument
- * ("a thread would stomp it, unless you are very careful" vs
- * "in your own process space, fire at will!")
+ * ("in your own process space, fire at will!")
  */
 static
 size_t				local_process_var;
@@ -193,19 +204,25 @@ void *				service_thread
 	is_err = setjmp( catcher);
 	if ( ! is_err)
 		{
-		// TODO:  critical section
-		heap = bza_cons_stack_rt( &catcher, TASK_HEAP_SIZE, 1);
+		// critical section (memory block init)
 
-		// TODO:  critical section
+		pthread_mutex_lock( &sys_lock);
+		heap = bza_cons_stack_rt( &catcher, TASK_HEAP_SIZE, 1);
+		pthread_mutex_unlock( &sys_lock);
+
+		// critical section (time / format lib calls)
+
+		pthread_mutex_lock( &sys_lock);
 		secs = time( NULL);
-		local_process_var = bzb_from_asciiz( &catcher, &heap,
+		thread_dangerous_var = bzb_from_asciiz( &catcher, &heap,
 				ctime( &secs) );
+		srcs[ 0 ] = thread_dangerous_var;
+		pthread_mutex_unlock( &sys_lock);
 
 		pg = gen_pg_template( &catcher, &heap);
 
 		// cat into buf, one I/O call
 
-		srcs[ 0 ] = local_process_var;
 		srcs[ 1 ] = pg;
 		srcs[ 2 ] = bzb_from_asciiz( &catcher, &heap, "\n");
 		srcs[ 3 ] = 0;
@@ -214,14 +231,20 @@ void *				service_thread
 		puts( bzb_to_asciiz( &catcher, heap, buf) );
 		fflush( stdout);
 
-		// TODO:  critical section
+		// critical section (memory block destroy)
+
+		pthread_mutex_lock( &sys_lock);
+
 		// don't bother to dereference buffers here,
 		//  as we are just about to toss the containing heap
 		bza_dest_stack( NULL, &heap);
+
+		pthread_mutex_unlock( &sys_lock);
 		}  // try?
 	else
 		{
-		die( "service_fork() failed");
+		// TODO: deal with mutex unlock after longjmp
+		die( "service_thread() failed");
 		}  // catch?
 
 	}
@@ -238,6 +261,7 @@ void                do_threads
 
 	threads = malloc( cnt * sizeof( pthread_t) );
 	assert( threads != NULL);
+	pthread_mutex_init( &sys_lock, 0);
     for ( idx = 0; idx < cnt; idx++)
 
         {
@@ -250,6 +274,7 @@ void                do_threads
 		pthread_join( threads[ idx ], NULL);
         }  // wait for each slave to complete
 
+	pthread_mutex_destroy( &sys_lock);
 	free( threads);
     }
 
