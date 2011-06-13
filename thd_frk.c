@@ -6,7 +6,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <assert.h>
 
+#include <pthread.h>
 
 //    mp_bench - multiprocessing benchmarks for string handling
 //
@@ -27,6 +29,10 @@
 //
 //    You should have received a copy of the GNU Lesser General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+/* lock for system lib calls not verified to be safe */
+static
+pthread_mutex_t		sys_lock;
 
 /*
  * a non-local var, for the sake of argument
@@ -146,6 +152,87 @@ void                service_fork()
     free( buf);
     }
 
+/* pretend to provide a useful service for thread testing */
+static
+void *				service_thread
+	(
+	void *			param
+	)
+	{
+    time_t          secs;
+    const char *    pg;
+    char *          buf;
+    int             tm_ln;
+    int             pg_ln;
+    char *          buf_off;
+
+	// TODO: mutex(es)
+
+    // call non-reentrant routine on global var - safe w/out threading!
+    secs = time( NULL);
+    local_process_var = ctime( &secs);
+
+    pg = gen_pg_template();
+
+    // strcat into buf, one I/O call
+    // now I remember why "we" don't do C any more:
+    //  (strcat() would be easier, but I'm trying to milk cycles
+    //  as well as avoid multiple I/O calls)
+
+    tm_ln = strlen( local_process_var);
+    pg_ln = strlen( pg);
+    buf = malloc( tm_ln + pg_ln + 3);  // ' ', '\n' & '\0'
+    if ( buf == NULL)
+        {
+        die( "failed memory allocation");
+        }  // allocation failed?
+
+    buf_off = buf;
+    memcpy( buf_off, local_process_var, tm_ln);
+    buf_off += tm_ln;
+    *buf_off = ' ';
+    buf_off++;  // increment by itself for clarity, you C sadists, let compiler optomize!
+    memcpy( buf_off, pg, pg_ln);
+    buf_off += pg_ln;
+    *buf_off = '\n';
+    buf_off++;
+    *buf_off = '\0';
+    puts( buf);
+    fflush( stdout);
+
+    free( (char *) pg);
+    free( buf);
+	}
+
+/* test thread based concurrency */
+static
+void                do_threads
+    (
+    int             cnt
+    )
+    {
+	pthread_t *		threads;
+	int				idx;
+
+	threads = malloc( cnt * sizeof( pthread_t) );
+	assert( threads != NULL);
+	pthread_mutex_init( &sys_lock, 0);
+    for ( idx = 0; idx < cnt; idx++)
+
+        {
+		pthread_create( &( threads[ idx ]), NULL, &service_thread, NULL);
+        }  // lob off each slave to process "request"
+
+    for ( idx = 0; idx < cnt; idx++)
+
+        {
+		pthread_join( threads[ idx ], NULL);
+        }  // wait for each slave to complete
+
+	pthread_mutex_destroy( &sys_lock);
+	free( threads);
+    }
+
 /* test fork based concurrency */
 static
 void                do_forks
@@ -204,8 +291,7 @@ int                 main
     cnt = atoi( argv[ 2 ]);
     if ( mode == 'T')
         {
-        // &do_threads( $cnt);
-        die( "Sorry, threads not implemented yet");
+        do_threads( cnt);
         }  // threads?
     else if ( mode == 'F')
         {
