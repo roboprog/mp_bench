@@ -42,6 +42,13 @@ pthread_mutex_t		sys_lock;
 static
 const char *        local_process_var;
 
+/*
+ * a SHARED var
+ * ("a thread would stomp it, unless you are very careful")
+ */
+static
+const char *        thread_dangerous_var;
+
 /* fake perl "die" so easier to reuse some code */
 static
 void                die
@@ -67,7 +74,6 @@ void                reaper
     }
 
 /* pretend to do something that would generate some CPU work */
-// TODO: fix memory leak (or not, since exit() will just toss it out)
 static
 const char *        gen_pg_template()
     {
@@ -152,6 +158,46 @@ void                service_fork()
     free( buf);
     }
 
+/* pretend to do something that would generate some CPU work (thread version) */
+static
+const char *        gen_thd_pg_template()
+    {
+    char *          text;
+    int             pass;
+    char *          prev;
+    int             ln;
+
+	// TODO: critical sections
+
+    // quick & dirty transliteration of string logic:
+    //  (ignoring length counter vs terminating sentinel performance differences)
+
+    text = strdup( "<blah/>");
+    if ( text == NULL)
+        {
+        die( "failed memory allocation");
+        }  // allocation failed?
+
+    for ( pass = 0; pass < 6; pass++)
+
+        {
+        prev = text;
+        ln = strlen( prev);
+        text = malloc( ( ln * 2) + 1);
+        if ( text == NULL)
+            {
+            die( "failed memory allocation");
+            }  // allocation failed?
+
+        memcpy( text, prev, ln);
+        memcpy( text + ln, prev, ln);
+        text[ ln * 2 ] = '\0';
+        free( prev);
+        }  // cat some crud up to thrash on cache
+
+    return text;
+    }
+
 /* pretend to provide a useful service for thread testing */
 static
 void *				service_thread
@@ -160,35 +206,49 @@ void *				service_thread
 	)
 	{
     time_t          secs;
+    const char *    tdv_copy;
     const char *    pg;
     char *          buf;
     int             tm_ln;
     int             pg_ln;
     char *          buf_off;
 
-	// TODO: mutex(es)
+    // critical section: non-reentrant routine on global var
 
-    // call non-reentrant routine on global var - safe w/out threading!
+	pthread_mutex_lock( &sys_lock);
     secs = time( NULL);
-    local_process_var = ctime( &secs);
+	thread_dangerous_var = ctime( &secs);
+    tdv_copy = strdup( thread_dangerous_var);
+	pthread_mutex_unlock( &sys_lock);
 
-    pg = gen_pg_template();
+    if ( tdv_copy == NULL)
+        {
+        die( "failed memory allocation");
+        }  // allocation failed?
+
+    pg = gen_thd_pg_template();
 
     // strcat into buf, one I/O call
     // now I remember why "we" don't do C any more:
     //  (strcat() would be easier, but I'm trying to milk cycles
     //  as well as avoid multiple I/O calls)
 
-    tm_ln = strlen( local_process_var);
+    tm_ln = strlen( tdv_copy);
     pg_ln = strlen( pg);
+
+    // critical section: memory allocation
+
+	pthread_mutex_lock( &sys_lock);
     buf = malloc( tm_ln + pg_ln + 3);  // ' ', '\n' & '\0'
+	pthread_mutex_unlock( &sys_lock);
+
     if ( buf == NULL)
         {
         die( "failed memory allocation");
         }  // allocation failed?
 
     buf_off = buf;
-    memcpy( buf_off, local_process_var, tm_ln);
+    memcpy( buf_off, tdv_copy, tm_ln);
     buf_off += tm_ln;
     *buf_off = ' ';
     buf_off++;  // increment by itself for clarity, you C sadists, let compiler optomize!
@@ -200,8 +260,13 @@ void *				service_thread
     puts( buf);
     fflush( stdout);
 
+	// critical section (memory free)
+
+	pthread_mutex_lock( &sys_lock);
+    free( (char *) tdv_copy);
     free( (char *) pg);
     free( buf);
+	pthread_mutex_unlock( &sys_lock);
 	}
 
 /* test thread based concurrency */
