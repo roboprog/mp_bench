@@ -1,9 +1,29 @@
 program ThdFrk;
 
+uses
+	sysutils;
+
 var
 	mode : string[ 1 ];
 	cnt : string[ 7 ];
 
+{ test sequential processing for timing baseline }
+procedure doSequence
+	(
+	cnt : Integer
+	);
+	var
+		idx : Integer;
+	begin
+	for idx := 1 to cnt do
+
+		begin
+		writeln( 'TODO: serviceSequence()');
+		end  // lob off each slave to process "request"
+
+	end;
+
+{ main program logic:  spawn crud to see what happens }
 begin
 	mode := ParamStr( 1);
 	cnt := ParamStr( 2);
@@ -18,7 +38,9 @@ begin
 			end;
 		'S' :
 			begin
-			writeln( 'TODO: sequential...');
+            doSequence( StrToInt( cnt) );
+				// StrToInt is FreePascal extension  --
+				// GNU Pascal integer conversion is brain damaged
 			end;
 		otherwise
 			begin
