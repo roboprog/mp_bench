@@ -1,10 +1,13 @@
 program ThdFrk;
 
 uses
+	baseunix,
 	sysutils;
 
 var
-	mode : string[ 1 ];
+	thread_dangerous_var : TDateTime;
+	local_process_var : TDateTime;
+	mode : string[ 1 ];  // any overflow will simply be truncated silently
 	cnt : string[ 7 ];
 
 { pretend to do something that would generate some CPU work }
@@ -23,20 +26,20 @@ function genPgTemplate : AnsiString;
 	genPgTemplate := text;
 	end;
 
-{ pretend to provide a useful service for sequential testing }
-procedure serviceSequence;
+{ pretend to provide a useful service for fork (or sequential) testing }
+procedure service_fork;
 	var
 		timestamp : String[ 32 ];
 	begin
-	// timestamp = threadDangerousVar.format( new Date() );
-	timestamp := DateTimeToStr( Now);  // european format by default  :-)
+	local_process_var := Now;
+	timestamp := DateTimeToStr( local_process_var);  // european format by default  :-)
 	writeln( timestamp, ' ', genPgTemplate() );
 	end;
 
 { test sequential processing for timing baseline }
-procedure doSequence
+procedure do_sequence
 	(
-	cnt : Integer
+	cnt : Integer		// how many times to repeat the output
 	);
 	var
 		idx : Integer;
@@ -44,10 +47,31 @@ procedure doSequence
 	for idx := 1 to cnt do
 
 		begin
-		serviceSequence();
+		service_fork();
 		end  // lob off each slave to process "request"
 
 	end;
+
+{ test fork based concurrency }
+procedure do_forks
+	(
+	cnt : Integer		// how many times to repeat the output
+	);
+	var
+		idx : Integer;
+	begin
+	for idx := 1 to cnt do
+
+		begin
+		if ( FpFork = 0) then
+			begin
+			service_fork();
+			Halt;  // === done ===
+			end;
+		end  // lob off each slave to process "request"
+
+	end;
+
 
 { main program logic:  spawn crud to see what happens }
 begin
@@ -57,14 +81,15 @@ begin
 		'T' :
 			begin
 			Assert( false, 'TODO: threads...');
+			// TODO:  see "Clone"
 			end;
 		'F' :
 			begin
-			Assert( false, 'TODO: forks...');
+			do_forks( StrToInt( cnt) );
 			end;
 		'S' :
 			begin
-            doSequence( StrToInt( cnt) );
+			do_sequence( StrToInt( cnt) );
 				// StrToInt is FreePascal extension  --
 				// GNU Pascal integer conversion is brain damaged
 			end;
