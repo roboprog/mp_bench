@@ -7,6 +7,32 @@ var
 	mode : string[ 1 ];
 	cnt : string[ 7 ];
 
+{ pretend to do something that would generate some CPU work }
+function genPgTemplate : AnsiString;
+	var
+		text : AnsiString;
+		cnt : Integer;
+	begin
+	text := '<blah/>';
+	for cnt := 1 to 6 do
+
+		begin
+		text := text + text;
+		end;  // cat some crud up to thrash on cache
+
+	genPgTemplate := text;
+	end;
+
+{ pretend to provide a useful service for sequential testing }
+procedure serviceSequence;
+	var
+		timestamp : String[ 32 ];
+	begin
+	// timestamp = threadDangerousVar.format( new Date() );
+	timestamp := 'TODO: timestamp';
+	writeln( timestamp, ' ', genPgTemplate() );
+	end;
+
 { test sequential processing for timing baseline }
 procedure doSequence
 	(
@@ -18,7 +44,7 @@ procedure doSequence
 	for idx := 1 to cnt do
 
 		begin
-		writeln( 'TODO: serviceSequence()');
+		serviceSequence();
 		end  // lob off each slave to process "request"
 
 	end;
