@@ -45,7 +45,7 @@ my %IMPLS =
 	'./thd_frk.cbin' =>
 		[
 		'gcc --version',
-		[ 'S', 'F' ]
+		[ 'S', 'F', 'T' ]
 		],
 	'./thd_frk.pl' =>
 		[
@@ -70,10 +70,12 @@ my %IMPLS =
 	);
 
 # number of times to repeat a trial:
-my $MAX_TRIALS = 5;
+# my $MAX_TRIALS = 5;
+my $MAX_TRIALS = 2;
 
 # max number of iterations (simulated requests) within a trial:
-my $MAX_ITERS = 20000;
+# my $MAX_ITERS = 20000;
+my $MAX_ITERS = 5000;
 
 # sundry commands to dump system info of possible relevance:
 my @SYS_INFO_CMDS =
@@ -120,9 +122,10 @@ sub	build
 	system( 'gcc -O3 -pthread thd_frk.bzrt.c ' .
 			'buzzard-0.1/libbzrt.a ' .
 			'-o thd_frk.bzrt.cbin');
-	system( 'gcc -O3 thd_frk.c -o thd_frk.cbin');
+	system( 'gcc -O3 -pthread thd_frk.c ' .
+			'-o thd_frk.cbin');
 
-	exit 0;  # TEMP
+	# exit 0;  # TEMP
 
 	print "Java compile...\n";
 	# "just" compile, as the JIT deals with optomization later
