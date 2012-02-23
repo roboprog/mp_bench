@@ -29,7 +29,7 @@ procedure serviceSequence;
 		timestamp : String[ 32 ];
 	begin
 	// timestamp = threadDangerousVar.format( new Date() );
-	timestamp := 'TODO: timestamp';
+	timestamp := DateTimeToStr( Now);  // european format by default  :-)
 	writeln( timestamp, ' ', genPgTemplate() );
 	end;
 
