@@ -11,7 +11,7 @@ var
 	cnt : string[ 7 ];
 
 { pretend to do something that would generate some CPU work }
-function genPgTemplate : AnsiString;
+function gen_pg_template : AnsiString;
 	var
 		text : AnsiString;
 		cnt : Integer;
@@ -23,7 +23,7 @@ function genPgTemplate : AnsiString;
 		text := text + text;
 		end;  // cat some crud up to thrash on cache
 
-	genPgTemplate := text;
+	gen_pg_template := text;
 	end;
 
 { pretend to provide a useful service for fork (or sequential) testing }
@@ -33,7 +33,7 @@ procedure service_fork;
 	begin
 	local_process_var := Now;
 	timestamp := DateTimeToStr( local_process_var);  // european format by default  :-)
-	writeln( timestamp, ' ', genPgTemplate() );
+	writeln( timestamp, ' ', gen_pg_template() );
 	end;
 
 { test sequential processing for timing baseline }
@@ -60,6 +60,8 @@ procedure do_forks
 	var
 		idx : Integer;
 	begin
+	FpSigAction( SigChld, nil, nil);
+	// FpSignal( SigChld, SIG_IGN);
 	for idx := 1 to cnt do
 
 		begin
