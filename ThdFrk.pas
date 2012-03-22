@@ -1,6 +1,7 @@
 program ThdFrk;
 
 uses
+	cthreads,  // this has to be first, per manual (when using threads)
 	baseunix,
 	sysutils;
 
@@ -74,6 +75,33 @@ procedure do_forks
 
 	end;
 
+{ pretend to provide a useful service for thread testing }
+function service_thread
+	(
+	args : pointer
+	) : ptrint;
+	// var
+	begin
+	writeln( 'TODO');
+	service_thread := 0;
+	end;
+
+{ test thread based concurrency }
+procedure do_threads
+	(
+	cnt : Integer		// how many times to repeat the output
+	);
+	var
+		idx : Integer;
+	begin
+	for idx := 1 to cnt do
+
+		begin
+		BeginThread( @service_thread);
+		end  // lob off each slave to process "request"
+
+	end;
+
 
 { main program logic:  spawn crud to see what happens }
 begin
@@ -82,8 +110,7 @@ begin
 	case UpCase( mode[ 1 ]) of
 		'T' :
 			begin
-			Assert( false, 'TODO: threads...');
-			// TODO:  see "Clone"
+			do_threads( StrToInt( cnt) );
 			end;
 		'F' :
 			begin
