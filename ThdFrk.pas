@@ -2,10 +2,12 @@ program ThdFrk;
 
 uses
 	cthreads,  // this has to be first, per manual (when using threads)
+	cmem,  // supposed to be faster with threading
 	baseunix,
 	sysutils;
 
 var
+	kilroy : boolean;
 	thread_dangerous_var : TDateTime;
 	local_process_var : TDateTime;
 	mode : string[ 1 ];  // any overflow will simply be truncated silently
@@ -83,6 +85,7 @@ function service_thread
 	// var
 	begin
 	writeln( 'TODO');
+	kilroy := true;
 	service_thread := 0;
 	end;
 
@@ -94,12 +97,15 @@ procedure do_threads
 	var
 		idx : Integer;
 	begin
+	kilroy := false;
 	for idx := 1 to cnt do
 
 		begin
 		BeginThread( @service_thread);
-		end  // lob off each slave to process "request"
+		writeln( 'TODO: make thread ', idx, ' do something');
+		end;  // lob off each slave to process "request"
 
+	writeln( 'Kilroy ever got there? ', kilroy);
 	end;
 
 
