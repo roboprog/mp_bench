@@ -7,7 +7,8 @@ uses
 	sysutils;
 
 var
-	kilroy : boolean;
+	output : TextFile;  // can't write to console from a thread
+	thread_lock : TRTLCriticalSection;
 	thread_dangerous_var : TDateTime;
 	local_process_var : TDateTime;
 	mode : string[ 1 ];  // any overflow will simply be truncated silently
@@ -84,8 +85,12 @@ function service_thread
 	) : ptrint;
 	// var
 	begin
-	writeln( 'TODO');
-	kilroy := true;
+	EnterCriticalSection( thread_lock);
+	// writeln( 'TODO'); - ignored within a non-main thread, unfortunately
+	writeln( output, 'TODO');
+	Flush( output);
+	LeaveCriticalSection( thread_lock);
+	// TODO: post "done" message
 	service_thread := 0;
 	end;
 
@@ -97,7 +102,6 @@ procedure do_threads
 	var
 		idx : Integer;
 	begin
-	kilroy := false;
 	for idx := 1 to cnt do
 
 		begin
@@ -105,12 +109,15 @@ procedure do_threads
 		writeln( 'TODO: make thread ', idx, ' do something');
 		end;  // lob off each slave to process "request"
 
-	writeln( 'Kilroy ever got there? ', kilroy);
+	// TODO:  receive and count "done" messages
 	end;
 
 
 { main program logic:  spawn crud to see what happens }
 begin
+	Assign( output, 'fp.out.txt');
+	InitCriticalSection( thread_lock);
+	Rewrite( output);
 	mode := ParamStr( 1);
 	cnt := ParamStr( 2);
 	case UpCase( mode[ 1 ]) of
@@ -133,7 +140,9 @@ begin
 			Assert( false,
 					'Arg 1 must be T (thread), F (fork), or S (sequential)');
 			end
-	end
+	end;
+	DoneCriticalSection( thread_lock);
+	Close( output);
 end.
 
 // vi: ts=4 sw=4 ai
