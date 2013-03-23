@@ -8,7 +8,8 @@ import (
 )
 
 /* main program logic:  spawn crud to see what happens */
-func main() {
+func main(
+		) {
 	mode := os.Args[ 1 ]
     cnt, _ := strconv.Atoi( os.Args[ 2 ]);  // ignore error
 	if mode == "S" {
@@ -21,7 +22,8 @@ func main() {
 }
 
 /* test sequential processing for timing baseline */
-func do_sequence( cnt int) {
+func do_sequence(
+		cnt int) {  // how many times to run make-work
     for ; cnt > 0; cnt-- {
         service_fork();  // just in case faking a fork becomes practical
 	}  // run each "request" in turn
@@ -29,11 +31,11 @@ func do_sequence( cnt int) {
 }
 
 /* pretend to provide a useful service for fork testing */
-func service_fork() {
-
+func service_fork(
+		) {
 	// TODO:  get timestamp
 
-	pg := "TODO"  // TODO: page template function
+	pg := gen_pg_template()
 
 	buf := pg + "\n"  // TODO: prepend / append stuff
 
@@ -41,6 +43,12 @@ func service_fork() {
 	os.Stdout.Sync()
 
 }
+
+/* pretend to do something that would generate some CPU work */
+func gen_pg_template(
+		) string {
+    return "TODO"
+    }
 
 
 // *** EOF ****
