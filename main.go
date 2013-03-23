@@ -5,6 +5,16 @@ import (
 	"os"
 	// "strings"
 	"strconv"
+	"time"
+)
+
+var (
+	/*
+	 * a non-local var, for the sake of argument
+	 * ("a thread would stomp it, unless you are very careful" vs
+	 * "in your own process space, fire at will!")
+	 */
+	local_process_var string
 )
 
 /* main program logic:  spawn crud to see what happens */
@@ -33,11 +43,14 @@ func do_sequence(
 /* pretend to provide a useful service for fork testing */
 func service_fork(
 		) {
-	// TODO:  get timestamp
+
+    // call non-reentrant routine on global var - safe w/out threading!
+    secs := time.Now()
+    local_process_var = secs.Format( "01/02/06 03:04 PM")  // digits are places from majik timestamp "Mon Jan 2 15:04:05 -0700 MST 2006"
 
 	pg := gen_pg_template()
 
-	buf := pg + "\n"  // TODO: prepend / append stuff
+	buf := local_process_var + " " + pg + "\n"
 
 	fmt.Print( buf)
 	os.Stdout.Sync()
