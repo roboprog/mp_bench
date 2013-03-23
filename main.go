@@ -47,8 +47,13 @@ func service_fork(
 /* pretend to do something that would generate some CPU work */
 func gen_pg_template(
 		) string {
-    return "TODO"
-    }
+    text := "<blah/>"
+    for pass := 0; pass < 6; pass++ {
+		text += text
+	}  // cat some crud up to thrash on cache
+
+    return text
+}
 
 
 // *** EOF ****
