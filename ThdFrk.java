@@ -32,6 +32,7 @@ public
 class                   ThdFrk
     {
 
+	/** non-reentrant data/code */
     private static final
     SimpleDateFormat    threadDangerousVar = new SimpleDateFormat();
 
@@ -121,7 +122,11 @@ class                   ThdFrk
     void                serviceSequence()
         {
         String timestamp = threadDangerousVar.format( new Date() );
-        System.out.println( timestamp + " " + genPgTemplate() );
+
+		String buf = timestamp + " " + genPgTemplate() + "\n";
+
+        System.out.print( buf);
+		// do not flush
         }
 
     /** pretend to do something that would generate some CPU work */
