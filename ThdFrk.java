@@ -98,8 +98,12 @@ class                   ThdFrk
             {
             // contrived?  not so much: date formatter is not thread-safe
             String timestamp = threadDangerousVar.format( new Date() );
-            System.out.println( timestamp + " " + genPgTemplate() );
             }
+
+		String buf = timestamp + " " + genPgTemplate() + "\n";
+
+        System.out.print( buf);
+		// do not flush
         }
 
     /** test sequential processing for timing baseline */

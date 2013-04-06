@@ -29,12 +29,12 @@ import (
 )
 
 var (
-	/*
-	 * a non-local var, for the sake of argument
-	 * ("a thread would stomp it, unless you are very careful" vs
-	 * "in your own process space, fire at will!")
-	 */
-	local_process_var string
+	/** non-reentrant data/code */
+	thread_dangerous_var = func (
+			) string {
+		secs := time.Now()
+		return secs.Format( "01/02/06 03:04 PM")  // digits are places from majik timestamp "Mon Jan 2 15:04:05 -0700 MST 2006"
+	}
 )
 
 /* main program logic:  spawn crud to see what happens */
@@ -65,10 +65,9 @@ func service_fork(
 		) {
 
     // call non-reentrant routine on global var - safe w/out threading!
-    secs := time.Now()
-    local_process_var = secs.Format( "01/02/06 03:04 PM")  // digits are places from majik timestamp "Mon Jan 2 15:04:05 -0700 MST 2006"
+    timestamp := thread_dangerous_var()
 
-	buf := local_process_var + " " + gen_pg_template() + "\n"
+	buf := timestamp + " " + gen_pg_template() + "\n"
 
 	fmt.Print( buf)
 	// do not flush
