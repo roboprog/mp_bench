@@ -49,12 +49,10 @@ func service_fork(
     local_process_var = secs.Format( "01/02/06 03:04 PM")  // digits are places from majik timestamp "Mon Jan 2 15:04:05 -0700 MST 2006"
 
 	pg := gen_pg_template()
-
 	buf := local_process_var + " " + pg + "\n"
 
 	fmt.Print( buf)
-	os.Stdout.Sync()
-
+	// do not flush
 }
 
 /* pretend to do something that would generate some CPU work */
