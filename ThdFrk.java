@@ -93,11 +93,13 @@ class                   ThdFrk
     private static
     void                serviceThread()
         {
+		String timestamp;
+
         // force a shared data situation, however contrived
         synchronized( threadDangerousVar)
             {
             // contrived?  not so much: date formatter is not thread-safe
-            String timestamp = threadDangerousVar.format( new Date() );
+            timestamp = threadDangerousVar.format( new Date() );
             }
 
 		String buf = timestamp + " " + genPgTemplate() + "\n";
