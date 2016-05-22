@@ -9,6 +9,9 @@
 
 'use strict'
 
+var thread_dangerous_var
+var local_process_var
+
 /** somewhat portable runtime setup */
 var rt = ( function () {
     var rt
@@ -31,7 +34,7 @@ var main = function()
     {
     rt.argv.shift()  // toss prog name
 	var mode = rt.argv.shift().toUpperCase()
-	var cnt = Number.parseInt( rt.argv.shift() )
+	var cnt = new Number( rt.argv.shift() )
 /*
 	if ( uc( $mode) eq 'T')
         {
@@ -51,6 +54,39 @@ var main = function()
 		throw new Error( "Arg 1 must be T (thread), F (fork), or S (sequential)" )
 		}
     }
+
+/** test sequential processing for timing baseline */
+var do_sequence = function ( cnt )
+	{
+	for ( ; cnt > 0; cnt -- )
+
+		{
+        service_fork()  // reuse, since no locks or shared resources
+		}  // run each "request" in turn
+
+	}
+
+/** pretend to provide a useful service for fork testing */
+var service_fork = function ()
+	{
+	local_process_var = new Date()
+	rt.out( local_process_var + " " + gen_pg_template() )
+	}
+
+/** pretend to do something that would generate some CPU work */
+var gen_pg_template = function ()
+	{
+    var idx
+
+	var text = "<blah/>"
+	for ( idx = 0; idx < 6; idx ++ )
+
+		{
+		text += text
+		}  // cat some crud up to thrash on cache
+
+	return text
+	}
 
 main()
 
