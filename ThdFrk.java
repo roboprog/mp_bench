@@ -32,6 +32,7 @@ public
 class                   ThdFrk
     {
 
+	/** non-reentrant data/code */
     private static final
     SimpleDateFormat    threadDangerousVar = new SimpleDateFormat();
 
@@ -92,13 +93,19 @@ class                   ThdFrk
     private static
     void                serviceThread()
         {
+		String timestamp;
+
         // force a shared data situation, however contrived
         synchronized( threadDangerousVar)
             {
             // contrived?  not so much: date formatter is not thread-safe
-            String timestamp = threadDangerousVar.format( new Date() );
-            System.out.println( timestamp + " " + genPgTemplate() );
+            timestamp = threadDangerousVar.format( new Date() );
             }
+
+		String buf = timestamp + " " + genPgTemplate() + "\n";
+
+        System.out.print( buf);
+		// do not flush
         }
 
     /** test sequential processing for timing baseline */
@@ -121,7 +128,11 @@ class                   ThdFrk
     void                serviceSequence()
         {
         String timestamp = threadDangerousVar.format( new Date() );
-        System.out.println( timestamp + " " + genPgTemplate() );
+
+		String buf = timestamp + " " + genPgTemplate() + "\n";
+
+        System.out.print( buf);
+		// do not flush
         }
 
     /** pretend to do something that would generate some CPU work */
