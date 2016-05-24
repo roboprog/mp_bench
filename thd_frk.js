@@ -1,10 +1,10 @@
 // #!/usr/bin/env jjs -scripting
 
-// Basic demo of writing a JavaScript script,
-//  but using Java 1.8 jjs rather than Node.js
-//  
-//  Usage:
-//          basic.js [ -- <<name>> ]
+//    mp_bench - multiprocessing benchmarks for string handling
+//
+// TODO: make sure junk tag generator can't be optimized away
+// TODO: try posix fork module on node
+// TODO: try threads on Java (how to init interpreter instances???)
 // .....................................
 
 'use strict'
