@@ -25,11 +25,11 @@
 
 require 'thread.rb'
 
-@@local_process_var = nil
+$local_process_var = nil
 
-@@thread_dangerous_var = nil
+$thread_dangerous_var = nil
 
-@@mutex = Mutex.new
+$mutex = Mutex.new
 
 # pretend to do something that would generate some CPU work
 def gen_pg_template
@@ -44,8 +44,8 @@ end
 
 # service a request which does not need to worry about shared data
 def service_fork
-	@@local_process_var = Time.now
-	print @@local_process_var.to_s + ' ' + gen_pg_template + "\n"
+	$local_process_var = Time.now
+	print $local_process_var.to_s + ' ' + gen_pg_template + "\n"
 end
 
 # test sequential processing for timing baseline
@@ -75,9 +75,9 @@ end
 # pretend to provide a useful service for thread testing
 def service_thread
 	# force a shared data situation, however contrived
-	@@mutex.synchronize do
-		@@thread_dangerous_var = Time.now
-		print @@thread_dangerous_var.to_s + ' ' + gen_pg_template + "\n"
+	$mutex.synchronize do
+		$thread_dangerous_var = Time.now
+		print $thread_dangerous_var.to_s + ' ' + gen_pg_template + "\n"
 	end
 end
 
